@@ -1,8 +1,5 @@
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.EntityFrameworkCore;
 using BookLibraryApi.Data;
-using BookLibraryApi.Controllers;
-using BookLibraryApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<BookLibraryApiContext>(options =>
@@ -27,9 +24,5 @@ if (app.Environment.IsDevelopment())
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.MapBooksEndpoints();
-
-app.MapUsersEndpoints();
-
+app.UseStaticFiles();
 app.Run();

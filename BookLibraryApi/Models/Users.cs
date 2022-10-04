@@ -9,7 +9,7 @@ namespace BookLibraryApi.Models
         [Key]
         public int UserID { get; set; }
         [Column(TypeName = "nvarchar(20)")]
-        public string UserName { get; set; }
+        public string? UserName { get; set; }
         [Column(TypeName = "nvarchar(20)")]
         public string Password { get; set; }
         [Column(TypeName = "nvarchar(30)")]
@@ -20,10 +20,10 @@ namespace BookLibraryApi.Models
         public string LastName { get; set; }
         public DateTime Created { get; set; }
         [Column(TypeName = "nvarchar(30)")]
-        public string CreatedBy { get; set; }
+        public string? CreatedBy { get; set; }
         public DateTime LastUpdatedOn { get; set; }
         [Column(TypeName = "nvarchar(30)")]
-        public string LastUpdatedBy { get; set; }
+        public string? LastUpdatedBy { get; set; }
         public Status Status { get; set; }
 
     }

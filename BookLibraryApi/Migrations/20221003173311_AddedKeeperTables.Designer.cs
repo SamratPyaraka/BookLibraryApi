@@ -4,6 +4,7 @@ using BookLibraryApi.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BookLibraryApi.Migrations
 {
     [DbContext(typeof(BookLibraryApiContext))]
-    partial class BookLibraryApiContextModelSnapshot : ModelSnapshot
+    [Migration("20221003173311_AddedKeeperTables")]
+    partial class AddedKeeperTables
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -75,10 +77,6 @@ namespace BookLibraryApi.Migrations
                     b.Property<string>("BookDescription")
                         .IsRequired()
                         .HasColumnType("nvarchar(200)");
-
-                    b.Property<string>("BookImageURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(500)");
 
                     b.Property<string>("BookName")
                         .IsRequired()
@@ -152,6 +150,7 @@ namespace BookLibraryApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UserName")
+                        .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
                     b.HasKey("UserID");

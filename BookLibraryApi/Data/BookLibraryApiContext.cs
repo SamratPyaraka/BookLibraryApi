@@ -17,5 +17,7 @@ namespace BookLibraryApi.Data
         public DbSet<BookLibraryApi.Models.Books> Books { get; set; } = default!;
 
         public DbSet<BookLibraryApi.Models.Users> Users { get; set; }
+
+        public DbSet<BookLibraryApi.Models.BookKeeper> BookKeeper { get; set; }
     }
 }
