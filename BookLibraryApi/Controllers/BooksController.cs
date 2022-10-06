@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookLibraryApi.Data;
 using BookLibraryApi.Models;
+using static System.Reflection.Metadata.BlobBuilder;
 
 namespace BookLibraryApi.Controllers
 {
@@ -26,14 +27,15 @@ namespace BookLibraryApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Books>>> GetBooks()
         {
-            return await _context.Books.ToListAsync();
+            return await _context.Books.Where(x => x.Status == Status.Active).ToListAsync();
         }
 
         // GET: api/Books/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Books>> GetBooks(int id)
+        [HttpGet]
+        [Route("GetBooks")]
+        public async Task<ActionResult<Books>> GetBooks(int bookID)
         {
-            var books = await _context.Books.FindAsync(id);
+            var books = await _context.Books.FindAsync(bookID);
 
             if (books == null)
             {
@@ -77,28 +79,105 @@ namespace BookLibraryApi.Controllers
         // POST: api/Books
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Books>> PostBooks(Books books)
+        [Route("CreateNewBook")]
+        public async Task<ActionResult<APIResponse>> CreateNewBook(Books books)
         {
-            _context.Books.Add(books);
-            await _context.SaveChangesAsync();
+            var entity = _context.Books.FirstOrDefault(book => book.BookName == books.BookName);
+            if (entity == null)
+            {
+                if (books.BookImageURL.Contains("http://localhost:5221"))
+                {
+                    books.BookImageURL = books.BookImageURL.Replace("http://localhost:5221", "");
+                }
+                _context.Books.Add(books);
+                await _context.SaveChangesAsync();
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "Book Created.",
+                    Data = ""
+                };
+                return CreatedAtAction("CreateNewBook", response);
+            }
+            else
+            {
+                var response = new APIResponse
+                {
+                    Response = false,
+                    Status = 200,
+                    ResponseMessage = "Book Name exists in database.",
+                    Data = ""
+                };
+                return CreatedAtAction("CreateNewBook", response);
+            }
+        }
 
-            return CreatedAtAction("GetBooks", new { id = books.BookID }, books);
+        // POST: api/Books
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        [Route("UpdateBookDetails")]
+        public async Task<ActionResult<APIResponse>> UpdateBookDetails(Books books)
+        {
+            var entity = _context.Books.FirstOrDefault(book => book.BookID == books.BookID);
+            if(entity != null)
+            {
+                entity.BookName = books.BookName;
+                entity.BookDescription = books.BookDescription;
+                await _context.SaveChangesAsync();
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "Book Details Updated",
+                    Data = ""
+                };
+                return CreatedAtAction("UpdateBookDetails", response);
+            }
+            else
+            {
+                var response = new APIResponse
+                {
+                    Response = false,
+                    Status = 200,
+                    ResponseMessage = "Book not found in databse",
+                    Data = ""
+                };
+                return CreatedAtAction("UpdateBookDetails", response);
+            }
+            
         }
 
         // DELETE: api/Books/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBooks(int id)
+        [HttpGet]
+        [Route("UpdateBookStatus")]
+        public async Task<ActionResult<APIResponse>> UpdateBookStatus(int BookID)
         {
-            var books = await _context.Books.FindAsync(id);
-            if (books == null)
+            var entity = _context.Books.FirstOrDefault(book => book.BookID == BookID);
+            if (entity != null)
             {
-                return NotFound();
+                entity.Status = Status.Inactive;
+                await _context.SaveChangesAsync();
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "Book Deleted.",
+                    Data = ""
+                };
+                return CreatedAtAction("UpdateBookStatus", response);
             }
-
-            _context.Books.Remove(books);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
+            else
+            {
+                var response = new APIResponse
+                {
+                    Response = false,
+                    Status = 200,
+                    ResponseMessage = "Book not found in databse",
+                    Data = ""
+                };
+                return CreatedAtAction("UpdateBookStatus", response);
+            }
         }
 
         private bool BooksExists(int id)

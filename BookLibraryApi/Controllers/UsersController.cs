@@ -115,20 +115,20 @@ namespace BookLibraryApi.Controllers
         }
 
         // DELETE: api/Users/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUsers(int id)
-        {
-            var users = await _context.Users.FindAsync(id);
-            if (users == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteUsers(int id)
+        //{
+        //    var users = await _context.Users.FindAsync(id);
+        //    if (users == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.Users.Remove(users);
-            await _context.SaveChangesAsync();
+        //    _context.Users.Remove(users);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool UsersExists(int id)
         {

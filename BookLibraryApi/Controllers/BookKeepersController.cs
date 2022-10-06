@@ -85,20 +85,20 @@ namespace BookLibraryApi.Controllers
         }
 
         // DELETE: api/BookKeepers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteBookKeeper(int id)
-        {
-            var bookKeeper = await _context.BookKeeper.FindAsync(id);
-            if (bookKeeper == null)
-            {
-                return NotFound();
-            }
+        //[HttpDelete("{id}")]
+        //public async Task<IActionResult> DeleteBookKeeper(int id)
+        //{
+        //    var bookKeeper = await _context.BookKeeper.FindAsync(id);
+        //    if (bookKeeper == null)
+        //    {
+        //        return NotFound();
+        //    }
 
-            _context.BookKeeper.Remove(bookKeeper);
-            await _context.SaveChangesAsync();
+        //    _context.BookKeeper.Remove(bookKeeper);
+        //    await _context.SaveChangesAsync();
 
-            return NoContent();
-        }
+        //    return NoContent();
+        //}
 
         private bool BookKeeperExists(int id)
         {

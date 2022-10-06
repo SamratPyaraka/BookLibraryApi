@@ -17,9 +17,9 @@ namespace BookLibraryApi.Models
         public BookType Category { get; set; }
         public KeepType KeepType { get; set; }
         public DateTime InsertedDate { get; set; }
-        public string InsertedBy { get; set; }
+        public string InsertedBy { get; set; } = "";
         public DateTime LastUpdatedDate { get; set; }
-        public string LastUpdatedBy { get; set; }
+        public string LastUpdatedBy { get; set; } = "";
 
         public Status Status { get; set; }
     }
