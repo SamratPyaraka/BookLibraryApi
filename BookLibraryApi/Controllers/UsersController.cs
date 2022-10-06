@@ -61,16 +61,18 @@ namespace BookLibraryApi.Controllers
                 };
                 return CreatedAtAction("GetUserFromEmail", notExists);
             }
-
-            var response = new APIResponse
+            else
             {
-                Response=true,
-                Status=200,
-                ResponseMessage= "Users exists.",
-                Data = userExists
-            };
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "Users exists.",
+                    Data = userExists
+                };
 
-            return response;
+                return CreatedAtAction("GetUserFromEmail", response);
+            }
         }
 
 
@@ -93,9 +95,9 @@ namespace BookLibraryApi.Controllers
                 await _context.SaveChangesAsync();
 
                 var response = new APIResponse
-                { 
+                {
                     Response = true,
-                    Status=200,
+                    Status = 200,
                     ResponseMessage = "You have registered successfully.",
                     Data = null
                 };
