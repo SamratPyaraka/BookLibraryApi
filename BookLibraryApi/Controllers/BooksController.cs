@@ -30,6 +30,24 @@ namespace BookLibraryApi.Controllers
             return await _context.Books.Where(x => x.Status == Status.Active).ToListAsync();
         }
 
+        [HttpGet]
+        [Route("GetLimitedBooks")]
+        public async Task<ActionResult<IEnumerable<Books>>> GetBooks(int? skip, int? take)
+        {
+            var result = _context.Books.AsQueryable();
+            result = _context.Books.Where(x => x.Status == Status.Active);
+            if (skip != null)
+            {
+                result = result.Skip((int)skip);
+            }
+
+            if (take != null)
+            {
+                result = result.Take((int)take);
+            }
+            return await result.ToListAsync();
+        }
+
         // GET: api/Books/5
         [HttpGet]
         [Route("GetBooks")]
