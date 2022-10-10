@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using BookLibraryApi.Data;
 using BookLibraryApi.Models;
 using static System.Reflection.Metadata.BlobBuilder;
+using System.Formats.Asn1;
+using System.Globalization;
+using CsvHelper;
 
 namespace BookLibraryApi.Controllers
 {
@@ -100,12 +103,12 @@ namespace BookLibraryApi.Controllers
         [Route("CreateNewBook")]
         public async Task<ActionResult<APIResponse>> CreateNewBook(Books books)
         {
-            var entity = _context.Books.FirstOrDefault(book => book.BookName == books.BookName);
+            var entity = _context.Books.FirstOrDefault(book => book.Title == books.Title);
             if (entity == null)
             {
-                if (books.BookImageURL.Contains("http://localhost:5221"))
+                if (books.ImageURL != null && books.ImageURL.Contains("http://localhost:5221"))
                 {
-                    books.BookImageURL = books.BookImageURL.Replace("http://localhost:5221", "");
+                    books.ImageURL = books.ImageURL.Replace("http://localhost:5221", "");
                 }
                 _context.Books.Add(books);
                 await _context.SaveChangesAsync();
@@ -138,10 +141,10 @@ namespace BookLibraryApi.Controllers
         public async Task<ActionResult<APIResponse>> UpdateBookDetails(Books books)
         {
             var entity = _context.Books.FirstOrDefault(book => book.BookID == books.BookID);
-            if(entity != null)
+            if (entity != null)
             {
-                entity.BookName = books.BookName;
-                entity.BookDescription = books.BookDescription;
+                entity.Title = books.Title;
+                entity.Description = books.Description;
                 await _context.SaveChangesAsync();
                 var response = new APIResponse
                 {
@@ -163,7 +166,7 @@ namespace BookLibraryApi.Controllers
                 };
                 return CreatedAtAction("UpdateBookDetails", response);
             }
-            
+
         }
 
         // DELETE: api/Books/5
@@ -201,6 +204,92 @@ namespace BookLibraryApi.Controllers
         private bool BooksExists(int id)
         {
             return _context.Books.Any(e => e.BookID == id);
+        }
+
+        [HttpPost]
+        [Route("UploadCSVData")]
+        public async Task<APIResponse> UploadData(IFormFile file)
+        {
+            try
+            {
+                var fileextension = Path.GetExtension(file.FileName);
+                var filename = Guid.NewGuid().ToString() + fileextension;
+                var filepath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "files", filename);
+                using (FileStream fs = System.IO.File.Create(filepath))
+                {
+                    file.CopyTo(fs);
+                }
+                if (fileextension == ".csv")
+                {
+                    using (var reader = new StreamReader(filepath))
+                    using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                    {
+                        var records = csv.GetRecords<Books>();
+                        foreach (var record in records)
+                        {
+
+                            if (string.IsNullOrWhiteSpace(record.Title))
+                            {
+                                break;
+                            }
+                            Books book = _context.Books.Where(s => s.Title == record.Title).FirstOrDefault();
+
+                            if (book == null)
+                            {
+                                book = new Books();
+                            }
+
+                            book.Title = record.Title;
+                            book.Subtitle = record.Subtitle;
+                            if(record.Description!=null && record.Description.Length > 3998)
+                                book.Description = record.Description.Substring(0,3998);
+                            else
+                                book.Description = record.Description;
+                            book.Authors = record.Authors;
+                            book.Category = record.Category;
+                            book.AverageRating = record.AverageRating;
+                            book.BookCount = record.BookCount;
+                            book.ISBN10 = record.ISBN10;
+                            book.ISBN13 = record.ISBN13;
+                            book.ImageURL = record.ImageURL;
+                            book.Status = record.Status;
+                            book.InsertedDate = record.InsertedDate;
+                            book.InsertedBy = record.InsertedBy;
+                            book.LastUpdatedBy = record.LastUpdatedBy;
+                            book.LastUpdatedDate = record.LastUpdatedDate;
+                            book.NumberOfPages = record.NumberOfPages;
+                            book.RatingsCount = record.RatingsCount;
+
+                            if (book.BookID == 0)
+                                _context.Books.Add(book);
+                            else
+                                _context.Books.Update(book);
+                        }
+                        _context.SaveChanges();
+                    }
+                }
+                else
+                {
+                    return new APIResponse
+                    {
+                        Response = false,
+                        ResponseMessage = "You can only add CSV file",
+                        Status = (int)System.Net.HttpStatusCode.UnprocessableEntity
+                    };
+                }
+
+
+            }
+            catch (Exception e)
+            {
+            }
+
+            return new APIResponse
+            {
+                Response = true,
+                ResponseMessage = "Data Updated Successfully",
+                Status = (int)System.Net.HttpStatusCode.OK
+            };
         }
     }
 }

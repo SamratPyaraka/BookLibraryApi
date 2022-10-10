@@ -37,7 +37,6 @@ namespace BookLibraryApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("InsertedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("InsertedDate")
@@ -47,7 +46,6 @@ namespace BookLibraryApi.Migrations
                         .HasColumnType("int");
 
                     b.Property<string>("UpdatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<DateTime>("UpdatedDate")
@@ -69,43 +67,62 @@ namespace BookLibraryApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("BookID"), 1L, 1);
 
-                    b.Property<int>("BookCount")
+                    b.Property<string>("Authors")
+                        .HasColumnType("nvarchar(1200)");
+
+                    b.Property<float?>("AverageRating")
+                        .HasColumnType("real");
+
+                    b.Property<int?>("BookCount")
                         .HasColumnType("int");
 
-                    b.Property<string>("BookDescription")
-                        .IsRequired()
+                    b.Property<string>("Category")
+                        .HasColumnType("nvarchar(1200)");
+
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(4000)");
+
+                    b.Property<string>("ISBN10")
                         .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("BookImageURL")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(500)");
+                    b.Property<string>("ISBN13")
+                        .HasColumnType("nvarchar(200)");
 
-                    b.Property<string>("BookName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(100)");
-
-                    b.Property<int>("Category")
-                        .HasColumnType("int");
+                    b.Property<string>("ImageURL")
+                        .HasColumnType("nvarchar(1000)");
 
                     b.Property<string>("InsertedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("InsertedDate")
+                    b.Property<DateTime?>("InsertedDate")
                         .HasColumnType("datetime2");
 
                     b.Property<int>("KeepType")
                         .HasColumnType("int");
 
                     b.Property<string>("LastUpdatedBy")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("LastUpdatedDate")
+                    b.Property<DateTime?>("LastUpdatedDate")
                         .HasColumnType("datetime2");
+
+                    b.Property<int?>("NumberOfPages")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PublishedYear")
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int?>("RatingsCount")
+                        .HasColumnType("int");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
+
+                    b.Property<string>("Subtitle")
+                        .HasColumnType("nvarchar(1200)");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(1000)");
 
                     b.HasKey("BookID");
 
@@ -120,32 +137,28 @@ namespace BookLibraryApi.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("UserID"), 1L, 1);
 
-                    b.Property<DateTime>("Created")
+                    b.Property<DateTime?>("Created")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("CreatedBy")
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("Email")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("FirstName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("LastName")
-                        .IsRequired()
                         .HasColumnType("nvarchar(30)");
 
                     b.Property<string>("LastUpdatedBy")
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<DateTime>("LastUpdatedOn")
+                    b.Property<DateTime?>("LastUpdatedOn")
                         .HasColumnType("datetime2");
 
                     b.Property<string>("Password")
-                        .IsRequired()
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("Status")

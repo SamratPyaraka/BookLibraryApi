@@ -48,7 +48,7 @@ namespace BookLibraryApi.Controllers
         [Route("GetUserFromEmail")]
         public async Task<ActionResult<APIResponse>> GetUserFromEmail(string email)
         {
-            var userExists = _context.Users.Where(x => x.Email == email).ToList();
+            var userExists = await _context.Users.Where(x => x.Email == email).ToListAsync();
 
             if (userExists.Count == 0)
             {
@@ -99,7 +99,7 @@ namespace BookLibraryApi.Controllers
                     Response = true,
                     Status = 200,
                     ResponseMessage = "You have registered successfully.",
-                    Data = null
+                    Data = ""
                 };
                 return CreatedAtAction("GetUsers", new { id = users.UserID }, response);
             }
@@ -110,7 +110,7 @@ namespace BookLibraryApi.Controllers
                     Response = false,
                     Status = 200,
                     ResponseMessage = "Email already exists",
-                    Data = null
+                    Data = ""
                 };
                 return CreatedAtAction("GetUsers", response);
             }

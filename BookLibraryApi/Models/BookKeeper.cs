@@ -14,9 +14,9 @@ namespace BookLibraryApi.Models
         public int Amount { get; set; }
         public DateTime InsertedDate { get; set; }
         [Column(TypeName = "nvarchar(50)")]
-        public string InsertedBy { get; set; }
+        public string? InsertedBy { get; set; }
         public DateTime UpdatedDate { get; set; }
         [Column(TypeName = "nvarchar(50)")]
-        public string UpdatedBy { get; set; }
+        public string? UpdatedBy { get; set; }
     }
 }
