@@ -7,10 +7,12 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookLibraryApi.Data;
 using BookLibraryApi.Models;
+using System.Net;
 
 namespace BookLibraryApi.Controllers
 {
     [Route("api/[controller]")]
+    [Produces("application/json")]
     [ApiController]
     public class BookKeepersController : ControllerBase
     {
@@ -29,17 +31,38 @@ namespace BookLibraryApi.Controllers
         }
 
         // GET: api/BookKeepers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<BookKeeper>> GetBookKeeper(int id)
+        [HttpGet]
+        [Route("GetBooksByUserID")]
+        public async Task<ActionResult<List<BookRecords>>> GetBookKeeper(int userID)
         {
-            var bookKeeper = await _context.BookKeeper.FindAsync(id);
+            var bookKeeper = await _context.BookKeeper.Where(x => x.UserID == userID).ToListAsync();
+            List<BookRecords> bookList = new List<BookRecords>();
+            foreach (var bookForKeep in bookKeeper)
+            {
+                var book = _context.Books.FirstOrDefault(e => e.BookID == bookForKeep.BookID);
+                if (book != null)
+                {
+                    var bookRecord = new BookRecords
+                    {
+                        BookID = bookForKeep.BookID,
+                        ISBN = book.ISBN13,
+                        Title = book.Title,
+                        HasExpiry = bookForKeep.KeepType == 0 ? true : false,
+                        ValidTill = bookForKeep.Expiry,
+                        PurchasedOn = bookForKeep.InsertedDate,
+                        Amount = bookForKeep.Amount,
+                        OwnBorrow = bookForKeep.KeepType == 0 ? "Bowwored" : "Owned"
+                    };
+                    bookList.Add(bookRecord);
+                }
+            }
 
             if (bookKeeper == null)
             {
                 return NotFound();
             }
 
-            return bookKeeper;
+            return bookList;
         }
 
         // PUT: api/BookKeepers/5
@@ -76,12 +99,45 @@ namespace BookLibraryApi.Controllers
         // POST: api/BookKeepers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<BookKeeper>> PostBookKeeper(BookKeeper bookKeeper)
+        public async Task<ActionResult<APIResponse>> PostBookKeeper(OrderDetails orderDetails)
         {
-            _context.BookKeeper.Add(bookKeeper);
-            await _context.SaveChangesAsync();
+            var userExists = _context.Users.Any(x => x.UserID == orderDetails.UserID);
+            if (userExists)
+            {
+                DateTime dt = orderDetails.Expiry.UtcDateTime;
+                BookKeeper bookKeeper = new BookKeeper
+                {
+                    UserID = orderDetails.UserID,
+                    BookID = orderDetails.BookID,
+                    Amount = orderDetails.Amount,
+                    KeepType = orderDetails.KeepType,
+                    Expiry = dt
+                };
+                _context.BookKeeper.Add(bookKeeper);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBookKeeper", new { id = bookKeeper.BookKeeperId }, bookKeeper);
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "You have registered successfully.",
+                    Data = null
+                };
+
+                return CreatedAtAction("GetBookKeeper", new { id = bookKeeper.BookKeeperId }, response);
+            }
+            else
+            {
+                var response = new APIResponse
+                {
+                    Response = true,
+                    Status = 200,
+                    ResponseMessage = "User Does not exits",
+                    Data = null
+                };
+
+                return CreatedAtAction("GetBookKeeper",response);
+            }
         }
 
         // DELETE: api/BookKeepers/5

@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BookLibraryApi.Data;
 using BookLibraryApi.Models;
+using NuGet.Protocol;
+using Newtonsoft.Json;
 
 namespace BookLibraryApi.Controllers
 {
@@ -48,9 +50,9 @@ namespace BookLibraryApi.Controllers
         [Route("GetUserFromEmail")]
         public async Task<ActionResult<APIResponse>> GetUserFromEmail(string email)
         {
-            var userExists = await _context.Users.Where(x => x.Email == email).ToListAsync();
+            var userExists = await _context.Users.FirstOrDefaultAsync(x => x.Email == email);
 
-            if (userExists.Count == 0)
+            if (userExists == null)
             {
                 var notExists = new APIResponse
                 {
@@ -99,7 +101,7 @@ namespace BookLibraryApi.Controllers
                     Response = true,
                     Status = 200,
                     ResponseMessage = "You have registered successfully.",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("GetUsers", new { id = users.UserID }, response);
             }
@@ -110,7 +112,7 @@ namespace BookLibraryApi.Controllers
                     Response = false,
                     Status = 200,
                     ResponseMessage = "Email already exists",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("GetUsers", response);
             }

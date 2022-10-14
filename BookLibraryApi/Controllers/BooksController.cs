@@ -117,7 +117,7 @@ namespace BookLibraryApi.Controllers
                     Response = true,
                     Status = 200,
                     ResponseMessage = "Book Created.",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("CreateNewBook", response);
             }
@@ -128,7 +128,7 @@ namespace BookLibraryApi.Controllers
                     Response = false,
                     Status = 200,
                     ResponseMessage = "Book Name exists in database.",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("CreateNewBook", response);
             }
@@ -151,7 +151,7 @@ namespace BookLibraryApi.Controllers
                     Response = true,
                     Status = 200,
                     ResponseMessage = "Book Details Updated",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("UpdateBookDetails", response);
             }
@@ -162,7 +162,7 @@ namespace BookLibraryApi.Controllers
                     Response = false,
                     Status = 200,
                     ResponseMessage = "Book not found in databse",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("UpdateBookDetails", response);
             }
@@ -184,7 +184,7 @@ namespace BookLibraryApi.Controllers
                     Response = true,
                     Status = 200,
                     ResponseMessage = "Book Deleted.",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("UpdateBookStatus", response);
             }
@@ -195,7 +195,7 @@ namespace BookLibraryApi.Controllers
                     Response = false,
                     Status = 200,
                     ResponseMessage = "Book not found in databse",
-                    Data = ""
+                    Data = null
                 };
                 return CreatedAtAction("UpdateBookStatus", response);
             }
@@ -259,6 +259,7 @@ namespace BookLibraryApi.Controllers
                             book.LastUpdatedDate = record.LastUpdatedDate;
                             book.NumberOfPages = record.NumberOfPages;
                             book.RatingsCount = record.RatingsCount;
+                            book.PublishedYear = record.PublishedYear;
 
                             if (book.BookID == 0)
                                 _context.Books.Add(book);

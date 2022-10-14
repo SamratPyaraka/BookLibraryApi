@@ -12,10 +12,11 @@ namespace BookLibraryApi.Models
         public int UserID { get; set; }
         public KeepType KeepType { get; set; }
         public int Amount { get; set; }
+        public DateTime? Expiry { get; set; }
         public DateTime InsertedDate { get; set; }
         [Column(TypeName = "nvarchar(50)")]
         public string? InsertedBy { get; set; }
-        public DateTime UpdatedDate { get; set; }
+        public DateTime UpdatedDate { get; set; } 
         [Column(TypeName = "nvarchar(50)")]
         public string? UpdatedBy { get; set; }
     }
